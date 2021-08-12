@@ -532,7 +532,33 @@ namespace Frends.Community.SecurityThreatDiagnostics
                 builder.Clear();
             }
         }
-        
+
+        public static SecurityThreatDiagnosticsResult ChallengeAgainstNullOrEmptyValueAttributeArray(
+            [PropertyTab] ValidationAttributes validationAttributes,
+            [PropertyTab] Options options,
+            CancellationToken cancellationToken)
+        {
+            SecurityThreatDiagnosticsResult securityThreatDiagnosticsResult = new SecurityThreatDiagnosticsResult();
+            StringBuilder builder = new StringBuilder("NULL value exposed.");
+            
+            try
+            { 
+                validationAttributes.Attribute.ToList().ForEach(entry => ChallengeDataContentAgainstNullOrEmptyValues(entry, options, cancellationToken));
+                securityThreatDiagnosticsResult.IsValid = true;
+                return securityThreatDiagnosticsResult;
+            }
+            catch (Exception exception)
+            {
+                ArgumentException argumentException =
+                    new ArgumentException(exception.ToString(), exception);
+                throw new ApplicationException(builder.ToString(), argumentException);
+            }
+            finally
+            {
+                builder.Clear();
+            }
+        }
+
         public static SecurityThreatDiagnosticsResult ChallengeDataContentAgainstNullOrEmptyValues
         (
             string payload,     
@@ -559,8 +585,8 @@ namespace Frends.Community.SecurityThreatDiagnostics
                     }
 
                     securityThreatDiagnosticsResult.IsValid = String.IsNullOrEmpty(payload);
-                    return securityThreatDiagnosticsResult;
                 }
+                return securityThreatDiagnosticsResult;
             }
             catch (Exception exception)
             {
@@ -572,8 +598,6 @@ namespace Frends.Community.SecurityThreatDiagnostics
             {
                 builder.Clear();
             }
-
-            return null;
         }
 
     }

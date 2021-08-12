@@ -231,5 +231,19 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
                       .Append("");
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeDataContentAgainstNullOrEmptyValues(nullValues.ToString(), options, CancellationToken.None));
         }
+
+        [Test]
+        public void GivenNullValuesWithMultipleAttributesWhenChallengingPayloadAttributesForValidationThenSecurityThreatDiagnosticsMustRaiseExceptionDueToFoundEmptyOrNullValues()
+        {
+            string invalidAttribute1 = "Name attribute";
+            string invalidAttribute2 = "\0";
+            string invalidAttribute3 = "Value attribute";
+            string parallel = invalidAttribute1 + invalidAttribute2 + invalidAttribute3;
+            string[] attributes = {invalidAttribute1, invalidAttribute2, invalidAttribute3, parallel};
+            validationAttributes.Attribute = attributes;
+            Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAgainstNullOrEmptyValueAttributeArray(validationAttributes, options, CancellationToken.None));
+        }
+
     }
+
 }
