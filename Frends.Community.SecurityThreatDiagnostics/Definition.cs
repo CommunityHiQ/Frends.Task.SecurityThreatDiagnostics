@@ -28,7 +28,14 @@ namespace Frends.Community.SecurityThreatDiagnostics
         /// The payload or the attribute value to be validated.
         /// </summary>
         [DefaultValue("{{#trigger.data.body.}}")]
-        public Dictionary<string, bool> Attribute { get; set; }
+        public OptionalAttribute[] optionalAttributes { get; set; }
+        //public Dictionary<string, bool> Attribute { get; set; }
+        public class OptionalAttribute
+        {
+            public string Attribute { get; set; }
+            public bool Enabled{ get; set; }
+        }
+        
     }
     
     /// <summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using NUnit.Framework;
 using System.Threading;
@@ -148,11 +149,17 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
         {
             string invalidAttribute1 = "<script>function xss() { alert('injection'); } xss();</script>";
             string invalidAttribute2 = "<script>function xss1() { alert('injection'); } xss1();</script>";
-            //string[] attributes = {invalidAttribute1, invalidAttribute2};
-            Dictionary<string, bool> attributes = new Dictionary<string, bool>();
-            attributes.Add(invalidAttribute1, true);
-            attributes.Add(invalidAttribute2, true);
-            validationAttributes.Attribute = attributes;
+            
+            Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute optionalAttribute1 = new Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute();
+            optionalAttribute1.Attribute = invalidAttribute1;
+            optionalAttribute1.Enabled = true;
+            
+            Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute optionalAttribute2 = new Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute();
+            optionalAttribute2.Attribute = invalidAttribute2;
+            optionalAttribute2.Enabled = true;
+
+            ValidationAttributes.OptionalAttribute[] attributes = {optionalAttribute1, optionalAttribute2};
+            validationAttributes.optionalAttributes = attributes;
            
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAttributesAgainstSecurityThreats(validationAttributes, options, CancellationToken.None));
         }
@@ -164,11 +171,19 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
             string invalidAttribute2 = "Address" + ":" + "%3Cscript%3E function attack() %7B alert(%27xss%27)%3B %7D";
             string invalidAttribute3 = "Mobile"+ ":" + "attack()%3B %3C%2Fscript%3E}}";
             string parallel = invalidAttribute1 + invalidAttribute2 + invalidAttribute3;
-            Dictionary<string, bool> attributes = new Dictionary<string, bool>();
-            attributes.Add(invalidAttribute1, true);
-            attributes.Add(invalidAttribute2, true);
-            validationAttributes.Attribute = attributes;
-           
+            invalidAttribute2 = "<script>function xss1() { alert('injection'); } xss1();</script>";
+            
+            Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute optionalAttribute1 = new Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute();
+            optionalAttribute1.Attribute = invalidAttribute1;
+            optionalAttribute1.Enabled = true;
+            
+            Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute optionalAttribute2 = new Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute();
+            optionalAttribute2.Attribute = invalidAttribute1;
+            optionalAttribute2.Enabled = true;
+
+            ValidationAttributes.OptionalAttribute[] attributes = { optionalAttribute1, optionalAttribute2 };
+            validationAttributes.optionalAttributes = attributes;
+
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAttributesAgainstSecurityThreats(validationAttributes, options, CancellationToken.None));
         }
         
@@ -178,11 +193,21 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
             string invalidAttribute1 = "{payload : {Name" + ":" + "PHNjcmlwdD5mdW5jdGlvbiBhdHRhY2sgKCkge2FsZXJ0KCd4c3MnKTt9YXR0YWNrKCk7PC9zY3JpcHQ+";
             string invalidAttribute2 = "Address : test";
             string invalidAttribute3 = "Mobile +358123456789 }}' >> mysqldump --all-databases > dump.sql";
-            string parallel = invalidAttribute1 + invalidAttribute2 + invalidAttribute3;
-            Dictionary<string, bool> attributes = new Dictionary<string, bool>();
-            attributes.Add(invalidAttribute1, true);
-            attributes.Add(invalidAttribute2, true);
-            validationAttributes.Attribute = attributes;
+            
+            invalidAttribute2 = "<script>function xss1() { alert('injection'); } xss1();</script>";
+            
+            Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute optionalAttribute1 = new Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute();
+            optionalAttribute1.Attribute = invalidAttribute1;
+            optionalAttribute1.Enabled = true;
+            
+            Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute optionalAttribute2 = new Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute();
+            optionalAttribute2.Attribute = invalidAttribute2;
+            optionalAttribute2.Enabled = true;
+            
+            ValidationAttributes.OptionalAttribute[] attributes = { optionalAttribute1, optionalAttribute2 };
+            validationAttributes.optionalAttributes = attributes;
+
+            
             options.Base64Decode = true;
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAttributesAgainstSecurityThreats(validationAttributes, options, CancellationToken.None));
         }
@@ -246,10 +271,19 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
             string invalidAttribute2 = "\0";
             string invalidAttribute3 = "Value attribute";
             string parallel = invalidAttribute1 + invalidAttribute2 + invalidAttribute3;
-            Dictionary<string, bool> attributes = new Dictionary<string, bool>();
-            attributes.Add(invalidAttribute1, true);
-            attributes.Add(invalidAttribute2, true);
-            validationAttributes.Attribute = attributes;
+            invalidAttribute2 = "<script>function xss1() { alert('injection'); } xss1();</script>";
+            
+            Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute optionalAttribute1 = new Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute();
+            optionalAttribute1.Attribute = invalidAttribute1;
+            optionalAttribute1.Enabled = true;
+            
+            Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute optionalAttribute2 = new Frends.Community.SecurityThreatDiagnostics.ValidationAttributes.OptionalAttribute();
+            optionalAttribute2.Attribute = invalidAttribute2;
+            optionalAttribute2.Enabled = true;
+
+            ValidationAttributes.OptionalAttribute[] attributes = { optionalAttribute1, optionalAttribute2 };
+            validationAttributes.optionalAttributes = attributes;
+
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAgainstNullOrEmptyValueAttributeArray(validationAttributes, options, CancellationToken.None));
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -72,6 +73,8 @@ namespace Frends.Community.SecurityThreatDiagnostics
     /// </summary>
     public static class SecurityThreatDiagnostics
     {
+        private static bool _b;
+
         private static string Decode(string payload, Options options)
         {
             for (int i = 0; i < options.MaxIterations; i++)
@@ -174,21 +177,21 @@ namespace Frends.Community.SecurityThreatDiagnostics
             cancellationToken.ThrowIfCancellationRequested();
             var invalidAttributes = new Dictionary<string, ArgumentException>();
             ConcurrentDictionary<string, SecurityRuleFilter> securityRuleFilters = SecurityFilterReader.Instance;
-            foreach (var attribute in validationAttributes.Attribute)
+            foreach (var attribute in validationAttributes.optionalAttributes)
             {
                 foreach (SecurityRuleFilter securityRuleFilter in securityRuleFilters.Values)
                 {
                     Validation validation = new Validation();
-                    validation.Payload = attribute.Key;
+                    validation.Payload = attribute.Attribute;
                     try
                     {
                         if (!options.AllowNullValues) 
-                            validationAttributes.Attribute.ToList().ForEach(entry => ChallengeDataContentAgainstNullOrEmptyValues(attribute.Key, options, cancellationToken));
+                            validationAttributes.optionalAttributes.ToList().ForEach(entry => ChallengeDataContentAgainstNullOrEmptyValues(attribute.Attribute, options, cancellationToken));
                         ChallengeAgainstSecurityThreats(validation, options, cancellationToken);
                     }
                     catch (ArgumentException argumentException)
                     {
-                        invalidAttributes.Add(attribute.Key, argumentException);
+                        invalidAttributes.Add(attribute.Attribute, argumentException);
                     }
                 }
             }
@@ -542,8 +545,13 @@ namespace Frends.Community.SecurityThreatDiagnostics
             StringBuilder builder = new StringBuilder("NULL value exposed.");
             
             try
-            { 
-                validationAttributes.Attribute.ToList().ForEach(entry => ChallengeDataContentAgainstNullOrEmptyValues(entry.Key, options, cancellationToken));
+            {
+                validationAttributes.optionalAttributes.ToList().ForEach(
+                    entry =>
+                    {
+                        if (entry.Enabled)
+                            ChallengeDataContentAgainstNullOrEmptyValues(entry.Attribute, options, cancellationToken);
+                    });
                 securityThreatDiagnosticsResult.IsValid = true;
                 return securityThreatDiagnosticsResult;
             }
