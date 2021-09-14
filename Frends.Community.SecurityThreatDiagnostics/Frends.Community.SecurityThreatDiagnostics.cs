@@ -180,14 +180,14 @@ namespace Frends.Community.SecurityThreatDiagnostics
                 foreach (SecurityRuleFilter securityRuleFilter in securityRuleFilters.Values)
                 {
                     Validation validation = new Validation();
-                    validation.Payload = attribute;
+                    validation.Payload = attribute.Key.ToString();
                     try
                     {
                         ChallengeAgainstSecurityThreats(validation, options, cancellationToken);
                     }
                     catch (ArgumentException argumentException)
                     {
-                        invalidAttributes.Add(attribute, argumentException);
+                        invalidAttributes.Add(attribute.Key.ToString(), argumentException);
                     }
                 }
             }
