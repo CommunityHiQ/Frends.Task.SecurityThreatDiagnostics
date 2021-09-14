@@ -179,16 +179,16 @@ namespace Frends.Community.SecurityThreatDiagnostics
                 foreach (SecurityRuleFilter securityRuleFilter in securityRuleFilters.Values)
                 {
                     Validation validation = new Validation();
-                    validation.Payload = attribute;
+                    validation.Payload = attribute.Key;
                     try
                     {
                         if (!options.AllowNullValues) 
-                            validationAttributes.Attribute.ToList().ForEach(entry => ChallengeDataContentAgainstNullOrEmptyValues(entry, options, cancellationToken));
+                            validationAttributes.Attribute.ToList().ForEach(entry => ChallengeDataContentAgainstNullOrEmptyValues(attribute.Key, options, cancellationToken));
                         ChallengeAgainstSecurityThreats(validation, options, cancellationToken);
                     }
                     catch (ArgumentException argumentException)
                     {
-                        invalidAttributes.Add(attribute, argumentException);
+                        invalidAttributes.Add(attribute.Key, argumentException);
                     }
                 }
             }
@@ -543,7 +543,7 @@ namespace Frends.Community.SecurityThreatDiagnostics
             
             try
             { 
-                validationAttributes.Attribute.ToList().ForEach(entry => ChallengeDataContentAgainstNullOrEmptyValues(entry, options, cancellationToken));
+                validationAttributes.Attribute.ToList().ForEach(entry => ChallengeDataContentAgainstNullOrEmptyValues(entry.Key, options, cancellationToken));
                 securityThreatDiagnosticsResult.IsValid = true;
                 return securityThreatDiagnosticsResult;
             }

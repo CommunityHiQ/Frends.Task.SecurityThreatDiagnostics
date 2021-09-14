@@ -147,8 +147,11 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
         public void GivenInvalidAttributesWhenChallengingPayloadAttributesForValidationThenSecurityThreatDiagnosticsMustRaiseExceptionDueToInjectedAttributss()
         {
             string invalidAttribute1 = "<script>function xss() { alert('injection'); } xss();</script>";
-            string invalidAttribute2 = "<script>function xss() { alert('injection'); } xss();</script>";
-            string[] attributes = {invalidAttribute1, invalidAttribute2};
+            string invalidAttribute2 = "<script>function xss1() { alert('injection'); } xss1();</script>";
+            //string[] attributes = {invalidAttribute1, invalidAttribute2};
+            Dictionary<string, bool> attributes = new Dictionary<string, bool>();
+            attributes.Add(invalidAttribute1, true);
+            attributes.Add(invalidAttribute2, true);
             validationAttributes.Attribute = attributes;
            
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAttributesAgainstSecurityThreats(validationAttributes, options, CancellationToken.None));
@@ -161,7 +164,9 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
             string invalidAttribute2 = "Address" + ":" + "%3Cscript%3E function attack() %7B alert(%27xss%27)%3B %7D";
             string invalidAttribute3 = "Mobile"+ ":" + "attack()%3B %3C%2Fscript%3E}}";
             string parallel = invalidAttribute1 + invalidAttribute2 + invalidAttribute3;
-            string[] attributes = {invalidAttribute1, invalidAttribute2, invalidAttribute3, parallel};
+            Dictionary<string, bool> attributes = new Dictionary<string, bool>();
+            attributes.Add(invalidAttribute1, true);
+            attributes.Add(invalidAttribute2, true);
             validationAttributes.Attribute = attributes;
            
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAttributesAgainstSecurityThreats(validationAttributes, options, CancellationToken.None));
@@ -174,7 +179,9 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
             string invalidAttribute2 = "Address : test";
             string invalidAttribute3 = "Mobile +358123456789 }}' >> mysqldump --all-databases > dump.sql";
             string parallel = invalidAttribute1 + invalidAttribute2 + invalidAttribute3;
-            string[] attributes = {invalidAttribute1, invalidAttribute2, invalidAttribute3, parallel};
+            Dictionary<string, bool> attributes = new Dictionary<string, bool>();
+            attributes.Add(invalidAttribute1, true);
+            attributes.Add(invalidAttribute2, true);
             validationAttributes.Attribute = attributes;
             options.Base64Decode = true;
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAttributesAgainstSecurityThreats(validationAttributes, options, CancellationToken.None));
@@ -239,7 +246,9 @@ namespace Frends.Community.SecurityThreatDiagnostics.Tests
             string invalidAttribute2 = "\0";
             string invalidAttribute3 = "Value attribute";
             string parallel = invalidAttribute1 + invalidAttribute2 + invalidAttribute3;
-            string[] attributes = {invalidAttribute1, invalidAttribute2, invalidAttribute3, parallel};
+            Dictionary<string, bool> attributes = new Dictionary<string, bool>();
+            attributes.Add(invalidAttribute1, true);
+            attributes.Add(invalidAttribute2, true);
             validationAttributes.Attribute = attributes;
             Assert.Throws<ApplicationException>(() => SecurityThreatDiagnostics.ChallengeAgainstNullOrEmptyValueAttributeArray(validationAttributes, options, CancellationToken.None));
         }
